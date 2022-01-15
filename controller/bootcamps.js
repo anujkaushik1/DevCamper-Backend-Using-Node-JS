@@ -1,8 +1,8 @@
 // @desc      Get all Bootcamps
 // @route     GET /api/v1/bootcamps
-// @access    Publicx
+// @access    Public
 exports.getBootCamps = function(req, res, next){
-    res.status(200).json({ success : true, msg : "Show all Bootcamps" })
+    res.status(200).json({ success : true, msg : "Show all Bootcamps", middlewareData : req.anuj })
 } 
 
 // @desc      Get single Bootcamp
