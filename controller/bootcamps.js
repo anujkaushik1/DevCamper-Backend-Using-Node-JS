@@ -10,6 +10,7 @@ exports.getBootCamps = async function(req, res, next){
 
         res.status(200).json({
             success : true,
+            count : bootcamps.length,
             data : bootcamps
         })
 
@@ -91,6 +92,23 @@ exports.updateBootCamp = async function(req, res, next){
 // @desc      Delete Bootcamp
 // @route     DELETE /api/v1/bootcamps/:id
 // @access    Private
-exports.deleteBootCamp = function(req, res, next){
-    res.status(200).json({ success : true, msg : `Delete bootcamp ${req.params.id}` })
+exports.deleteBootCamp = async function(req, res, next){
+    try {
+        const bootcamp = await Bootcamp.findByIdAndDelete(req.params.id)
+
+        if(!bootcamp){
+            return res.status(400).json({success : false})
+        }
+
+        res.status(200).json({
+            success : true,
+            data : bootcamp
+        })
+
+    } catch (err) {
+        res.status(400).json({
+            success : false,
+            data : err.msg
+        })
+    }
 }
