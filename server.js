@@ -2,6 +2,7 @@ const express = require("express");
 const dotenv = require("dotenv");
 const logger = require("./middleware/logger");
 const connectDB = require("./config/db");
+const errorHandler = require("./middleware/error");
 
 // Loading Env Variables =>
 
@@ -30,6 +31,8 @@ app.use(logger);
 // Mounting Routes =>
 
 app.use(API, bootcamps);
+
+app.use(errorHandler);
 
 const server = app.listen(PORT, function(){
     console.log(`Server is running in ${process.env.NODE_ENV} mode on port ${PORT}`);
