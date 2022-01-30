@@ -49,11 +49,16 @@ exports.getBootCamp = async function(req, res, next){
 // @access    Private
 exports.createBootCamp = async function(req, res, next){
 
-   const bootcamp = await Bootcamp.create(req.body);
-   res.status(201).json({
-       success : true,
-       data : bootcamp
-   })
+    try {
+        const bootcamp = await Bootcamp.create(req.body);
+        res.status(201).json({
+            success : true,
+            data : bootcamp
+        })       
+    } catch (err) {
+        next(err);   
+    }
+ 
 }
 
 // @desc      Update Bootcamp
