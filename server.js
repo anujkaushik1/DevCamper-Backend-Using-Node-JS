@@ -1,7 +1,9 @@
+const path = require("path");
 const express = require("express");
 const dotenv = require("dotenv");
 const logger = require("./middleware/logger");
 const connectDB = require("./config/db");
+const fileupload = require("express-fileupload")
 const errorHandler = require("./middleware/error");
 
 // Loading Env Variables =>
@@ -28,6 +30,13 @@ const PORT = process.env.PORT || 5000;
 
 app.use(logger);
 
+// File Upload =>
+
+app.use(fileupload());
+
+// Set static folder =>
+
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Mounting Routes =>
 
