@@ -3,7 +3,8 @@ const express = require("express");
 const dotenv = require("dotenv");
 const logger = require("./middleware/logger");
 const connectDB = require("./config/db");
-const fileupload = require("express-fileupload")
+const fileupload = require("express-fileupload");
+const cookieParser = require("cookie-parser");
 const errorHandler = require("./middleware/error");
 
 // Loading Env Variables =>
@@ -25,6 +26,9 @@ const app = express();
 
 // Body Parser =>
 app.use(express.json());
+
+// Cookie parser 
+app.use(cookieParser());
 
 const PORT = process.env.PORT || 5000;
 
