@@ -1,79 +1,79 @@
 const advancedResult = (model, populate) => async (req, res, next) => {
-  
-    let query;
-       
-    const reqQuery = { ...req.query };
+  let query;
 
-    // Fields to exclude =>
-    const removeFields = ["select", "sort", "page", "limit"];
+  const reqQuery = { ...req.query };
 
-    // Loops over removeFields and delete them from reqQuery
-    removeFields.forEach(params => delete reqQuery[params]);
+  // Fields to exclude =>
+  const removeFields = ["select", "sort", "page", "limit"];
 
-    let queryStr = JSON.stringify(reqQuery);
+  // Loops over removeFields and delete them from reqQuery
+  removeFields.forEach((params) => delete reqQuery[params]);
 
-    console.log(queryStr);
-    
-    // Create operators ($gt, $gte, etc)
-    queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`);
-    
-    query = model.find(JSON.parse(queryStr));
+  let queryStr = JSON.stringify(reqQuery);
 
-    if(req.query.select){
-        const fields = req.query.select.split(",").join(" ");
-        query = query.select(fields);
-    }
+  console.log(queryStr);
 
-    // Sort
-    if(req.query.sort){
-         const sortBy = req.query.sort.split(",").join(" ");
-         query = query.sort(sortBy);
-    }else{
-        query = query.sort("-createdAt"); 
-    }
+  // Create operators ($gt, $gte, etc)
+  queryStr = queryStr.replace(
+    /\b(gt|gte|lt|lte|in)\b/g,
+    (match) => `$${match}`
+  );
 
-    // Pagination =>
-    const page = parseInt(req.query.page, 10) || 1;
-    const limit = parseInt(req.query.limit, 10) || 25;
-    const startIndex = (page - 1) * limit;
-    const endIndex = page * limit;
-    const total = await model.countDocuments();
+  query = model.find(JSON.parse(queryStr));
 
-    query = query.skip(startIndex).limit(limit);
+  if (req.query.select) {
+    const fields = req.query.select.split(",").join(" ");
+    query = query.select(fields);
+  }
 
-    if(populate){
-        query = query.populate(populate);
-    }
+  // Sort
+  if (req.query.sort) {
+    const sortBy = req.query.sort.split(",").join(" ");
+    query = query.sort(sortBy);
+  } else {
+    query = query.sort("-createdAt");
+  }
 
+  // Pagination =>
+  const page = parseInt(req.query.page, 10) || 1;
+  const limit = parseInt(req.query.limit, 10) || 25;
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+  const total = await model.countDocuments();
 
-    const results = await query;
+  query = query.skip(startIndex).limit(limit);
 
-    // Pagination Result =>
-    const pagination = {};
+  if (populate) {
+    query = query.populate(populate);
+  }
 
-    if(endIndex < total){
-        pagination.next = {
-            page : page + 1,
-            limit
-        }
-    }
+  const results = await query;
 
-    if(startIndex > 0){
-        pagination.prev = {
-            page : page - 1,
-            limit
-        }
-    }
+  // Pagination Result =>
+  const pagination = {};
 
-    res.advancedResult = {
-        success : true,
-        count : results.length,
-        pagination,
-        data : results
-    }
+  if (endIndex < total) {
+    pagination.next = {
+      page: page + 1,
+      limit,
+    };
+  }
 
-    next();
+  if (startIndex > 0) {
+    pagination.prev = {
+      page: page - 1,
+      limit,
+    };
+  }
 
-}
+  res.advancedResult = {
+    success: true,
+    count: results.length,
+    pagination,
+    data: results,
+  };
+
+  next();
+};
 
 module.exports = advancedResult;
