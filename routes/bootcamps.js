@@ -1,42 +1,39 @@
 const express = require("express");
-const { getBootCamps, getBootCamp, updateBootCamp, deleteBootCamp, createBootCamp, getBootcampsInRadius, bootcampPhotoUpload } = require("../controller/bootcamps");
+const {
+  getBootCamps,
+  getBootCamp,
+  updateBootCamp,
+  deleteBootCamp,
+  createBootCamp,
+  getBootcampsInRadius,
+  bootcampPhotoUpload,
+} = require("../controller/bootcamps");
 const Bootcamp = require("../models/Bootcamp");
 const advancedResults = require("../middleware/advancedResults");
 const router = express.Router();
-const { protect, authorize } = require('../middleware/auth'); 
+const { protect, authorize } = require("../middleware/auth");
 
-// Include other resource router 
+// Include other resource router
 const courseRouter = require("./courses");
 
 // Re-route into other resource routers
 router.use("/:bootcampId/courses", courseRouter);
 
-
 router
   .route("/")
-  .get(advancedResults(Bootcamp, 'courses'), getBootCamps)
-  .post(protect, authorize('publisher', 'admin'), createBootCamp);
+  .get(advancedResults(Bootcamp, "courses"), getBootCamps)
+  .post(protect, authorize("publisher", "admin"), createBootCamp);
 
 router
   .route("/:id")
   .get(getBootCamp)
-  .delete(protect, authorize('publisher', 'admin'), deleteBootCamp)
-  .put(protect, authorize('publisher', 'admin'), updateBootCamp);
+  .delete(protect, authorize("publisher", "admin"), deleteBootCamp)
+  .put(protect, authorize("publisher", "admin"), updateBootCamp);
 
-router  
-  .route("/radius/:zipcode/:distance")
-  .get(getBootcampsInRadius);
+router.route("/radius/:zipcode/:distance").get(getBootcampsInRadius);
 
-router  
+router
   .route("/:id/photo")
-  .put(protect, authorize('publisher', 'admin'), bootcampPhotoUpload);
-
-
+  .put(protect, authorize("publisher", "admin"), bootcampPhotoUpload);
 
 module.exports = router;
-
-
-
-
-
-
