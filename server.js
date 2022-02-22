@@ -5,6 +5,7 @@ const logger = require("./middleware/logger");
 const connectDB = require("./config/db");
 const fileupload = require("express-fileupload");
 const cookieParser = require("cookie-parser");
+const mongoSanitize = require("express-mongo-sanitize");
 const errorHandler = require("./middleware/error");
 
 // Loading Env Variables =>
@@ -38,6 +39,10 @@ app.use(logger);
 // File Upload =>
 
 app.use(fileupload());
+
+// Sanitize data 
+
+app.use(mongoSanitize);
 
 // Set static folder =>
 
